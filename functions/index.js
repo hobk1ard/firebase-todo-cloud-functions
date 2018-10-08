@@ -36,6 +36,27 @@ toDoApp.get('/', (req, res) => {
         })
     });
 });
+
+toDoApp.delete('/', (req, res) => {
+    const uid = req.header("uid").trim();
+    const toDoId = req.header("toDoId").trim();
+    console.log("toDo delete '" + uid + "/" + toDoId);
+    if (!uid || !toDoId) {
+        return res.status(401).json({
+            message: 'Not allowed. Please provide uid and toDoId.'
+        });
+    }
+    return admin.database().ref(`/todos/${uid}/${toDoId}`).remove().then(() => {
+        console.log(Removed);
+        return res.status(200).json({
+            message: 'Removed'
+        });
+    }).catch((error) => {
+        return res.status(error.code).json({
+            message: `Something went wrong. ${error.message}`
+        });
+    });
+});
 //toDoApp.post('/:uid', (req, res) => res.send(toDo.create(req.params.uid)));
 //toDoApp.put('/:id', (req, res) => res.send(Widgets.update(req.params.id, req.body)));
 //toDoApp.delete('/:uid:toDoId', (req, res) => res.send(toDo.delete(req.params.uid, req.params.toDoId)));
